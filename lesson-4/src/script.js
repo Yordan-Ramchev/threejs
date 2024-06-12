@@ -1,4 +1,17 @@
 import * as THREE from 'three'
+/**
+ * Cursor
+ */
+const cursor = {
+    x: 0,
+    y: 0
+}
+
+window.addEventListener('mousemove', (e) => {
+    cursor.x = e.clientX / sizes.width - 0.5
+    cursor.y = -(e.clientY / sizes.height - 0.5)
+    console.log(cursor.x, cursor.y)
+})
 
 /**
  * Base
@@ -9,7 +22,7 @@ const canvas = document.querySelector('canvas.webgl')
 // Sizes
 const sizes = {
     width: 800,
-    height: 600
+    height: 400
 }
 
 // Scene
@@ -22,11 +35,13 @@ const mesh = new THREE.Mesh(
 )
 scene.add(mesh)
 
+const aspectRatio = sizes.width / sizes.height
 // Camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
-camera.position.x = 2
-camera.position.y = 2
-camera.position.z = 2
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+// const camera = new THREE.OrthographicCamera(-1 * aspectRatio, 1 * aspectRatio, 1, -1)
+// camera.position.x = 2
+// camera.position.y = 2
+camera.position.z = 3
 camera.lookAt(mesh.position)
 scene.add(camera)
 
@@ -44,7 +59,13 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
-    mesh.rotation.y = elapsedTime;
+    // mesh.rotation.y = elapsedTime;
+
+    // Update camera
+    camera.position.x = Math.sin(cursor.x * 10) * Math.PI / 2
+    camera.position.z = Math.cos(cursor.x * 10) * Math.PI / 2
+    camera.position.y = cursor.y * 6
+    camera.lookAt(mesh.position)
 
     // Render
     renderer.render(scene, camera)
